@@ -29,7 +29,6 @@ public class DriverService {
 	private static final Logger LOG = Logger.getLogger(DriverService.class);
 
 	private DBManager dbManager;
-	private Connection con;
 	private UserRep userRep; 
 	private DriverRep driverRep;
 	
@@ -49,7 +48,7 @@ public class DriverService {
 	public List<User> findAllUsersByRoleId(Integer roleId) throws AppException
 	{
 		List<User> users = null;
-		
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -70,6 +69,7 @@ public class DriverService {
 	 * @throws AppException
 	 */
 	public void deleteDriverById(Integer driverId) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -93,6 +93,7 @@ public class DriverService {
 	 * @throws AppException
 	 */
 	public void updateDriver(User user, Driver driver) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			userRep.updateUserById(con, user);
@@ -114,6 +115,7 @@ public class DriverService {
 	 * @throws AppException
 	 */
 	public void insertDriver(String login, String password, String name, String surname, String passport, String phone) throws AppException {
+		Connection con=null;
 		User user= new User();
 		Driver driver = new Driver();
 		user.setLogin(login);
@@ -153,6 +155,7 @@ public class DriverService {
 	 * @throws AppException
 	 */
 	public Driver findDriverByUserId(Integer userId) throws AppException {
+		Connection con=null;
 		Driver driver = null;
 		try {
 			con = dbManager.getConnection();

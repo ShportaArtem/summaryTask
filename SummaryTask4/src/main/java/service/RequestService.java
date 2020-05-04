@@ -31,7 +31,6 @@ public class RequestService {
 	private static final Logger LOG = Logger.getLogger(RequestService.class);
 
 	private DBManager dbManager;
-	private Connection con;
 	private DriverShippingRequestRep reqRep;
 	private ShippingRep shipRep;
 	private FirmRep firmRep;
@@ -52,6 +51,7 @@ public class RequestService {
 	 * @throws AppException
 	 */
 	public void deleteRequestById(Integer requestId) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -72,7 +72,7 @@ public class RequestService {
 	 * @throws AppException
 	 */
 	public void insertRequest(DriverShippingRequest request) throws AppException {
-		
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -96,6 +96,7 @@ public class RequestService {
 	 */
 	public List<DriverShippingRequest> findAllRequest() throws AppException{
 		List<DriverShippingRequest> requests= null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			requests= reqRep.findAllRequests(con);
@@ -118,6 +119,7 @@ public class RequestService {
 	 */
 	public List<DriverShippingRequest> findRequestsByDriverId(Integer driverId) throws AppException{
 		List<DriverShippingRequest> requests= null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -141,6 +143,7 @@ public class RequestService {
 	 */
 	public DriverShippingRequest findRequestInProcessByDriverId(Integer driverId) throws AppException{
 		DriverShippingRequest request= null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			List<Shipping> shippings = shipRep.findAllShipsInProcess(con);
@@ -202,6 +205,7 @@ public class RequestService {
 	 * @throws AppException
 	 */
 	public void chooseCarForShipping(Integer carId, Integer shippingId) throws AppException{
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -222,6 +226,7 @@ public class RequestService {
 	 * @throws AppException
 	 */
 	public List<DriverShippingRequest> findRequestByShippingId(Integer shippingId) throws AppException{
+		Connection con=null;
 		List<DriverShippingRequest> requests= null;
 		try {
 			con = dbManager.getConnection();
@@ -243,6 +248,7 @@ public class RequestService {
 	 * @throws AppException
 	 */
 	public Firm findFirmById(Integer firmId) throws AppException {
+		Connection con=null;
 		Firm firm =null;
 		try {
 			con = dbManager.getConnection();
@@ -264,6 +270,7 @@ public class RequestService {
 	 * @throws AppException
 	 */
 	public Car findCarById(Integer carId) throws AppException {
+		Connection con=null;
 		Car car =null;
 		try {
 			con = dbManager.getConnection();
@@ -285,6 +292,7 @@ public class RequestService {
 	 * @throws AppException
 	 */
 	public Firm findFirmByName(String name) throws AppException {
+		Connection con=null;
 		Firm firm =null;
 		try {
 			con = dbManager.getConnection();

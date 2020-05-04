@@ -25,7 +25,6 @@ public class LoginService {
 	private static final Logger LOG = Logger.getLogger(LoginService.class);
 
 	private DBManager dbManager;
-	private Connection con;
 	private UserRep userRep;
 	
 	public LoginService(DBManager dbManager, UserRep userRep)  {
@@ -43,6 +42,7 @@ public class LoginService {
 	 */
 	public User findUserByLogin(String login) throws AppException {
 		User user = null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			user = userRep.findUserByLogin(con, login);
@@ -67,6 +67,7 @@ public class LoginService {
 	 */
 	public User findUserById(int id) throws AppException {
 		User user = null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			user = userRep.findUserById(con, id);

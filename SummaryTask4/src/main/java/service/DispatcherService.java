@@ -25,7 +25,6 @@ public class DispatcherService {
 	
 	private DBManager dbManager;
 	private UserRep userRep;
-	private Connection con;
 	
 	public DispatcherService(DBManager dbManager, UserRep userRep) {
 		this.dbManager = dbManager;
@@ -40,6 +39,7 @@ public class DispatcherService {
 	 * @throws AppException
 	 */
 	public void deleteDispatcherById(Integer dispatcherId) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -61,6 +61,7 @@ public class DispatcherService {
 	 * @throws AppException
 	 */
 	public void updateDriver(User user) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			userRep.updateUserById(con, user);
@@ -81,6 +82,7 @@ public class DispatcherService {
 	 * @throws AppException
 	 */
 	public void insertDispatcher(User dispatcher) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);

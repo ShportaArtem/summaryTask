@@ -28,7 +28,6 @@ public class CarService {
 
 	
 	private DBManager dbManager;
-	private Connection con;
 	private CarRep carRep; 
 	private FirmRep firmRep; 
 	
@@ -46,6 +45,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public void deleteCartById(Integer carId) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -69,6 +69,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public Firm findFirmById(Integer firmId) throws AppException {
+		Connection con=null;
 		Firm firm =null;
 		try {
 			con = dbManager.getConnection();
@@ -92,6 +93,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public Car findCarById(Integer carId) throws AppException {
+		Connection con=null;
 		Car car =null;
 		try {
 			con = dbManager.getConnection();
@@ -116,6 +118,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public Firm findFirmByName(String name) throws AppException {
+		Connection con=null;
 		Firm firm =null;
 		try {
 			con = dbManager.getConnection();
@@ -139,6 +142,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public void updateCar(Car car) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -158,6 +162,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public void insertCar(String model, Integer carryingCapacity, Integer passengersCapacity, Integer firmId, Integer statusCar, String vehicleCondition) throws AppException {
+		Connection con=null;
 		Car car= new Car();
 		car.setCarryinfCapacity(carryingCapacity);
 		car.setFirmId(firmId);
@@ -187,6 +192,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public List<Car> findAllCars() throws AppException{
+		Connection con=null;
 		List<Car> cars= null;
 		try {
 			con = dbManager.getConnection();
@@ -209,6 +215,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public List<Firm> findAllFrims() throws AppException{
+		Connection con=null;
 		List<Firm> firms= null;
 		try {
 			con = dbManager.getConnection();
@@ -231,6 +238,7 @@ public class CarService {
 	 * @throws AppException
 	 */
 	public List<Car> findAllCarsNotInTrip() throws AppException{
+		Connection con=null;
 		List<Car> cars= null;
 		try {
 			con = dbManager.getConnection();

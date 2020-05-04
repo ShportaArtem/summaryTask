@@ -34,7 +34,6 @@ public class FlightService {
 	private static final Logger LOG = Logger.getLogger(FlightService.class);
 
 	private DBManager dbManager;
-	private Connection con;
 	private UserRep userRep;
 	private CarRep carRep;
 	private DriverShippingRequestRep requestRep;
@@ -61,7 +60,7 @@ public class FlightService {
 	public User findUserByShippingRequestId(int id) throws AppException {
 		User user = null;
 		DriverShippingRequest request = null;
-
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			request = requestRep.findDriverShippingRequestById(con, id);
@@ -85,6 +84,7 @@ public class FlightService {
 	 * @throws AppException
 	 */
 	public void cancelFlightById(Integer flightId) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -106,6 +106,7 @@ public class FlightService {
 	 */
 	public List<Shipping> findAllShips() throws AppException {
 		List<Shipping> shippings = null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			shippings = shipRep.findAllShips(con);
@@ -130,6 +131,7 @@ public class FlightService {
 	 */
 	public List<Shipping> findShippingsByStatus(String status) throws AppException {
 		List<Shipping> shippings = null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			shippings = shipRep.findShippingsByStatus(con, status);
@@ -153,6 +155,7 @@ public class FlightService {
 	 */
 	public Shipping findFlightById(Integer flightId) throws AppException {
 		Shipping ship = null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -173,6 +176,7 @@ public class FlightService {
 	 */
 	public void insertShipping(Integer dispathcerId, String arrivalCity, String departureCity, Date departureTime)
 			throws AppException {
+		Connection con=null;
 		Shipping ship = new Shipping();
 		ship.setArrivalCity(arrivalCity);
 		ship.setDepartureCity(departureCity);
@@ -207,6 +211,7 @@ public class FlightService {
 	 */
 	public DriverShippingRequest findRequestByDriverLoginAndShippingId(Integer shippingId, String loginDriver)
 			throws AppException {
+		Connection con=null;
 		DriverShippingRequest req = null;
 		User driver = null;
 
@@ -235,6 +240,7 @@ public class FlightService {
 	 */
 	public List<Shipping> findShippingsByNotDriverId(Integer driverId) throws AppException {
 		List<Shipping> shippings = null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			shippings = shipRep.findAllShips(con);
@@ -272,6 +278,7 @@ public class FlightService {
 	 */
 	public Car findCarByModelAndStatus(String model, Integer status) throws AppException {
 		Car car = null;
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			con.setAutoCommit(true);
@@ -293,6 +300,7 @@ public class FlightService {
 	 */
 	public void updateShipping(Integer dispathcerId, String status, Integer request, Integer carId, String arrivalCity,
 			String departureCity, Date departureTime, Integer id) throws AppException {
+		Connection con=null;
 		Shipping ship = new Shipping();
 		ship.setId(id);
 		ship.setArrivalCity(arrivalCity);
@@ -324,6 +332,7 @@ public class FlightService {
 	 * @throws AppException
 	 */
 	public void finishShipping(String vehicle, DriverShippingRequest finishedRequest) throws AppException {
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			shipRep.finishShipping(con, finishedRequest.getShippingId());
@@ -349,6 +358,7 @@ public class FlightService {
 	 */
 	public List<User> findUsersByShippingId(Integer shippingId) throws AppException {
 		List<User> users = new ArrayList<>();
+		Connection con=null;
 		try {
 			con = dbManager.getConnection();
 			List<DriverShippingRequest> requests = requestRep.findDriverShippingRequestsByShippingId(con, shippingId);
