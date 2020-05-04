@@ -1,7 +1,12 @@
 package model;
 
 import java.io.Serializable;
-
+/**
+ * Car entity.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class Car implements Serializable{
 
 	private static final long serialVersionUID = 5376181047481846206L;

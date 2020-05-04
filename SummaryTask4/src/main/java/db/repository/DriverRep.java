@@ -11,7 +11,12 @@ import java.util.List;
 
 import db.utils.DBUtils;
 import model.Driver;
-
+/**
+ * Driver repository. Works with table driver in db. 
+ * 
+ * @author A.Shporta
+ *
+ */
 public class DriverRep {
 	
 	private static final String SQL_CREATE_DRIVER = "INSERT INTO driver VALUES (?, ?, ?)";
@@ -20,17 +25,11 @@ public class DriverRep {
 	private static final String SQL_FIND_DRIVER_BY_USER_ID= "SELECT * FROM driver WHERE user_id=?";
 	private static final String SQL_UPDATE_DRIVER_BY_USER_ID = "UPDATE driver SET passport=?, telephone_number=? WHERE user_id=?";
 
-	
-	private static DriverRep instance;
-	public static synchronized DriverRep getInstance() {
-		if (instance == null) {
-			instance = new DriverRep();
-		}
-		return instance;
-	}
-
-	private DriverRep() {
-	}
+	/**
+	 * Returns all drivers.
+	 * 
+	 * @return List of driver models.
+	 */
 	public List<Driver> findAllDrivers(Connection con) throws SQLException, NoSuchAlgorithmException {
 		List<Driver> drivers = new ArrayList<>();
 
@@ -50,6 +49,14 @@ public class DriverRep {
 		}
 		return drivers;
 	}
+	
+	/**
+	 * Extracts a driver model from the result set.
+	 * 
+	 * @param rs
+	 *            Result set from which a driver model will be extracted.
+ 	 * @return Driver model
+	 */
 	private Driver extractDriver(ResultSet rs) throws SQLException {
 		Driver driver = new Driver();
 		driver.setUserId(rs.getInt("user_id"));
@@ -59,6 +66,13 @@ public class DriverRep {
 		return driver;
 	}
 	
+	/**
+	 * Update driver.
+	 * 
+	 * @param driver
+	 *            driver to update.
+	 * @throws SQLException
+	 */
 	public boolean updateDriverByUserId(Connection con, Driver driver) throws SQLException { 
 		boolean res = false;
 
@@ -87,6 +101,12 @@ public class DriverRep {
 		return res;
 	}
 	
+	/**
+	 * Insert a driver to db.
+	 * 
+	 * @param driver
+	 *            The driver that will be insert.
+	 */
 	public boolean insertDriver(Connection con, Driver driver) throws SQLException { 
 		boolean res = false;
 
@@ -116,7 +136,12 @@ public class DriverRep {
 	}
 
 	
-
+	/**
+	 * Delete a driver from db.
+	 * 
+	 * @param driver
+	 *            The driver that will be delete.
+	 */
 	public boolean deleteDriver(Connection con, int userId) throws SQLException {
 		PreparedStatement pstmt = null;
 
@@ -131,7 +156,11 @@ public class DriverRep {
 			DBUtils.close(pstmt);
 		}
 	}
-	
+	/**
+	 * Find driver by id.
+	 * 
+	 * @return driver model.
+	 */
 	public Driver findDriverByUserId(Connection con, int userId) throws SQLException {
 		Driver driver = null;
 		PreparedStatement pstmt = null;

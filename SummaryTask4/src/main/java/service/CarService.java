@@ -4,13 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 
+import db.DBManager;
 import db.exception.AppException;
 import db.exception.DBException;
 import db.exception.Messages;
@@ -20,38 +16,38 @@ import db.utils.DBUtils;
 import model.Car;
 import model.Firm;
 
+/**
+ * Car service. Works with DBManager and repositories. 
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class CarService {
 
 	private static final Logger LOG = Logger.getLogger(CarService.class);
 
 	
-	private DataSource ds;
-	private static CarService instance;
-
-	public static synchronized CarService getInstance() throws DBException {
-		if (instance == null) {
-			instance = new CarService();
-		}
-		return instance;
+	private DBManager dbManager;
+	private Connection con;
+	private CarRep carRep; 
+	private FirmRep firmRep; 
+	
+	public CarService(DBManager dbManager, CarRep carRep, FirmRep firmRep) {
+	this.carRep = carRep;
+	this.dbManager = dbManager;
+	this.firmRep = firmRep;
 	}
 	
-	private CarService() throws DBException{
-		try {
-			Context initContext = new InitialContext();
-			Context envContext = (Context) initContext.lookup("java:/comp/env");
-			ds = (DataSource) envContext.lookup("jdbc/autobasedb");
-			LOG.trace("Data source ==> " + ds);
-		} catch (NamingException ex) {
-			LOG.error(Messages.ERR_CANNOT_OBTAIN_DATA_SOURCE, ex);
-			throw new DBException(Messages.ERR_CANNOT_OBTAIN_DATA_SOURCE, ex);
-		}
-	}
 	
+	/**
+	 * Delete car by id
+	 * @param carId
+	 * 		Id car that will be delete.	
+	 * @throws AppException
+	 */
 	public void deleteCartById(Integer carId) throws AppException {
-		Connection con = null;
-		CarRep carRep = CarRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			carRep.deleteCar(con, carId);	
 		}catch (SQLException ex ) {
@@ -63,12 +59,19 @@ public class CarService {
 		
 	}
 	
+	/**
+	 * Find firm by id
+	 * 
+	 * @param firmId
+	 * 			Id firm that will be find.		
+	 * @return firm model
+	 *
+	 * @throws AppException
+	 */
 	public Firm findFirmById(Integer firmId) throws AppException {
-		Connection con = null;
 		Firm firm =null;
-		FirmRep firmRep = FirmRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			firm = firmRep.findFirmById(con, firmId);	
 		}catch (SQLException ex ) {
@@ -80,12 +83,18 @@ public class CarService {
 		return firm;
 	}
 	
+	/**
+	 * Find car by id
+	 * 
+	 * @param carId
+	 * 			Id car that will be find.
+	 * @return car model
+	 * @throws AppException
+	 */
 	public Car findCarById(Integer carId) throws AppException {
-		Connection con = null;
 		Car car =null;
-		CarRep carRep = CarRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			car = carRep.findCarById(con, carId);	
 		}catch (SQLException ex ) {
@@ -97,12 +106,19 @@ public class CarService {
 		return car;
 	}
 	
+	/**
+	 * Find firm by name
+	 * 
+	 * @param name
+	 * 		Name firm that will be find
+	 * @return firm model
+	 * 
+	 * @throws AppException
+	 */
 	public Firm findFirmByName(String name) throws AppException {
-		Connection con = null;
 		Firm firm =null;
-		FirmRep firmRep = FirmRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			firm = firmRep.findFirmByName(con, name);	
 		}catch (SQLException ex ) {
@@ -114,11 +130,17 @@ public class CarService {
 		return firm;
 	}
 	
+	/**
+	 * Update car
+	 * 
+	 * @param car
+	 * 		Car that will be update
+	 * 
+	 * @throws AppException
+	 */
 	public void updateCar(Car car) throws AppException {
-		Connection con = null;
-		CarRep carRep = CarRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			carRep.updateCar(con, car);
 		} catch (SQLException ex ) {
@@ -130,6 +152,11 @@ public class CarService {
 		
 	}
 	
+	/**
+	 * Insert car in DB
+	 * 
+	 * @throws AppException
+	 */
 	public void insertCar(String model, Integer carryingCapacity, Integer passengersCapacity, Integer firmId, Integer statusCar, String vehicleCondition) throws AppException {
 		Car car= new Car();
 		car.setCarryinfCapacity(carryingCapacity);
@@ -138,10 +165,8 @@ public class CarService {
 		car.setPassangersCapacity(passengersCapacity);
 		car.setStatus(statusCar);
 		car.setVehicleCondition(vehicleCondition);
-		Connection con = null;
-		CarRep carRep = CarRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			carRep.insertCar(con, car);
 		} catch (SQLException ex ) {
@@ -153,23 +178,18 @@ public class CarService {
 		
 	}
 	
-	public Connection getConnection() throws DBException {
-		Connection con = null;
-		try {
-			con = ds.getConnection();
-		} catch (SQLException ex) {
-			LOG.error(Messages.ERR_CANNOT_OBTAIN_CONNECTION, ex);
-			throw new DBException(Messages.ERR_CANNOT_OBTAIN_CONNECTION, ex);
-		}
-		return con;
-	}
 	
+	/**
+	 * Returns all cars.
+	 * 
+	 * @return List of car models.
+	 *
+	 * @throws AppException
+	 */
 	public List<Car> findAllCars() throws AppException{
-		Connection con = null;
 		List<Car> cars= null;
-		CarRep carRep = CarRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			cars= carRep.findAllCars(con);
 		}catch(SQLException ex ) {
 			DBUtils.rollback(con);
@@ -181,12 +201,17 @@ public class CarService {
 		return cars;
 	}
 	
+	/**
+	  * Returns all firms .
+	 * 
+	 * @return List of firm models.
+	 * 
+	 * @throws AppException
+	 */
 	public List<Firm> findAllFrims() throws AppException{
-		Connection con = null;
 		List<Firm> firms= null;
-		FirmRep firmRep = FirmRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			firms= firmRep.findAllFirms(con);
 		}catch(SQLException ex ) {
 			DBUtils.rollback(con);
@@ -198,12 +223,17 @@ public class CarService {
 		return firms;
 	}
 	
+	/**
+	  * Returns all cars that not in trip.
+	 * 
+	 * @return List of car models.
+	 * 
+	 * @throws AppException
+	 */
 	public List<Car> findAllCarsNotInTrip() throws AppException{
-		Connection con = null;
 		List<Car> cars= null;
-		CarRep carRep = CarRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			cars= carRep.findAllCarsNotInTrip(con);
 		}catch(SQLException ex ) {
 			DBUtils.rollback(con);

@@ -1,7 +1,12 @@
 package web;
 
 
-
+/**
+ * Path holder (jsp pages, controller commands).
+ * 
+ * @author A.Shporta
+ * 
+ */
 public final class Path {
 	
 	public static final String PAGE_LOGIN = "login.jsp";

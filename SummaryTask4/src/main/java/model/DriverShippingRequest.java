@@ -1,7 +1,12 @@
 package model;
 
 import java.io.Serializable;
-
+/**
+ * DriverShippingRequest entity.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class DriverShippingRequest implements Serializable{
 
 	private static final long serialVersionUID = 1906440099054051803L;

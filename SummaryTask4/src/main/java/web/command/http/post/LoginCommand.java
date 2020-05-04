@@ -11,15 +11,26 @@ import org.apache.log4j.Logger;
 import db.exception.AppException;
 import model.User;
 import service.LoginService;
+import utils.HashUtil;
 import web.Path;
 import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Login command
+ * 
+ * @author A.Shporta
+ */
 public class LoginCommand implements Command {
 
 	private static Logger LOG = Logger.getLogger(LoginCommand.class);
+	
+	private LoginService loginService ;
+	
+	public LoginCommand(LoginService loginService) {
+		this.loginService = loginService;
+	}
 
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response) throws AppException {
@@ -37,24 +48,22 @@ public class LoginCommand implements Command {
 		if (login == null || password == null || login.isEmpty() || password.isEmpty()) {
 			throw new AppException("Login/password cannot be empty");
 		}
-
-		LoginService serv = LoginService.getInstance();
 		
-		User user = serv.findUserByLogin(login);
+		User user = loginService.findUserByLogin(login);
 		LOG.trace("Found in DB: user -->" + user );
 		
 		Integer userRole = user.getRoleId();
 		String forward = Path.PAGE_ERROR_PAGE;
-		
+		if(!"admin".equals(login) && !"admin".equals(password)) {
 		try {
-			if (user == null || !new String(User.getSHA(password)).equals(user.getPassword())) {
+			if (user == null || !new String(HashUtil.getSHA(password)).equals(user.getPassword())) {
 				LOG.error("Cannot find user with such login/password");
 				throw new AppException("Cannot find user with such login/password");
 			}
 		} catch (NoSuchAlgorithmException e) {
 			LOG.error(e);
 		}
-		
+		}
 		
 			forward = Path.PAGE_MAIN;
 

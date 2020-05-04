@@ -14,6 +14,11 @@ import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
 
+/**
+ * Log out command
+ * 
+ * @author A.Shporta
+ */
 public class LogoutCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(LogoutCommand.class);

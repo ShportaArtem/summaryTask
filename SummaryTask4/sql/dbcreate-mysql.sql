@@ -155,9 +155,6 @@ INSERT INTO role VALUES(DEFAULT, 'dispatcher');
 INSERT INTO firm VALUES(DEFAULT, 'Chevrolet');
 
 INSERT INTO users VALUES(DEFAULT,1, 'admin','admin','Vova', 'Sorokin');
-INSERT INTO users VALUES(DEFAULT,2, 'driver','driver','Kirill', 'Voloboy');
-INSERT INTO users VALUES(DEFAULT,3, 'dispatcher','dispatcher','Ivan', 'Ivanov');
-INSERT INTO users VALUES(DEFAULT,2, 'driver2','driver2','Kirill2', 'Voloboy2');
 INSERT INTO driver VALUES(2, '1231231AB', '+380943564545');
 INSERT INTO driver VALUES(4, '1231231AB2', '+380943564546');
 INSERT INTO shipping VALUES(DEFAULT,3, 'Open',NULL,NULL, 'testCity','testCity','2020/12/31 11*30*45','2020/12/31 11*30*45');

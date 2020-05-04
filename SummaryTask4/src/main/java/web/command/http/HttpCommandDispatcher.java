@@ -13,7 +13,8 @@ public class HttpCommandDispatcher extends CommandDispatcher{
 	public boolean addCommand(String commandName, Command command) {
 		return commandMap.put(commandName, command)==null;
 	}
-
+	
+	
 	@Override
 	public Command getCommand(String commandName) {
 		

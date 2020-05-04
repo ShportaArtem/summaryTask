@@ -14,10 +14,22 @@ import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
 
+/**
+ * Cancel flight command
+ * 
+ * @author A.Shporta
+ */
 public class CancelFlightCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(CancelFlightCommand.class);
 	
+	private FlightService flightService;
+	
+	public CancelFlightCommand(FlightService flightService) {
+		super();
+		this.flightService = flightService;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -27,8 +39,7 @@ public class CancelFlightCommand implements Command{
 		Integer idFlight = Integer.parseInt(request.getParameter("flightId"));
 		LOG.trace("Found in request parameters: flightId --> " + idFlight);
 		
-		FlightService service = FlightService.getInstance();
-		service.cancelFlightById(idFlight);
+		flightService.cancelFlightById(idFlight);
 		LOG.trace("Cancel flight by id --> " + idFlight);
 		
 		CommandResult cr = new HttpCommandResult(RequestType.POST, Path.PAGE_FLIGHTS_POST);

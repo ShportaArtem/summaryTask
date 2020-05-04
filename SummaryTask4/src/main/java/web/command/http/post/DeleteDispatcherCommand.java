@@ -13,11 +13,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Delete dispatcher command
+ * 
+ * @author A.Shporta
+ */
 public class DeleteDispatcherCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(DeleteDispatcherCommand.class);
 	
+	private DispatcherService service;
+	
+	public DeleteDispatcherCommand(DispatcherService service) {
+		super();
+		this.service = service;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -27,7 +38,6 @@ public class DeleteDispatcherCommand implements Command{
 		Integer dispatcherId = Integer.parseInt(request.getParameter("dispatcherId"));
 		LOG.trace("Found in request parameters: dispatcherId --> " + dispatcherId);
 		
-		DispatcherService service = DispatcherService.getInstance();
 		service.deleteDispatcherById(dispatcherId);
 		LOG.trace("Delete dispatcher by id --> " +  dispatcherId);
 		

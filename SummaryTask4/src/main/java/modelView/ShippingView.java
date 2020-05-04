@@ -2,7 +2,12 @@ package modelView;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-
+/**
+ * View for shipping entity.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class ShippingView {
 
 	private int id;

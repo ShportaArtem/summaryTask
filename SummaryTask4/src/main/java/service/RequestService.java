@@ -4,13 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 
+import db.DBManager;
 import db.exception.AppException;
 import db.exception.DBException;
 import db.exception.Messages;
@@ -24,48 +20,40 @@ import model.DriverShippingRequest;
 import model.Firm;
 import model.Shipping;
 
+/**
+ * Request service. Works with DBManager and repositories. 
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class RequestService {
 
 	private static final Logger LOG = Logger.getLogger(RequestService.class);
 
-	private DataSource ds;
-	private static RequestService instance;
-
-	public static synchronized RequestService getInstance() throws DBException {
-		if (instance == null) {
-			instance = new RequestService();
-		}
-		return instance;
+	private DBManager dbManager;
+	private Connection con;
+	private DriverShippingRequestRep reqRep;
+	private ShippingRep shipRep;
+	private FirmRep firmRep;
+	private CarRep carRep;
+	
+	public RequestService(DBManager dbManager, DriverShippingRequestRep reqRep, ShippingRep shipRep, FirmRep firmRep, CarRep carRep) {
+	this.carRep = carRep;
+	this.dbManager = dbManager;
+	this.firmRep = firmRep;
+	this.reqRep = reqRep;
+	this.shipRep = shipRep;
 	}
 	
-	private RequestService() throws DBException{
-		try {
-			Context initContext = new InitialContext();
-			Context envContext = (Context) initContext.lookup("java:/comp/env");
-			ds = (DataSource) envContext.lookup("jdbc/autobasedb");
-			LOG.trace("Data source ==> " + ds);
-		} catch (NamingException ex) {
-			LOG.error(Messages.ERR_CANNOT_OBTAIN_DATA_SOURCE, ex);
-			throw new DBException(Messages.ERR_CANNOT_OBTAIN_DATA_SOURCE, ex);
-		}
-	}
-	
-	public Connection getConnection() throws DBException {
-		Connection con = null;
-		try {
-			con = ds.getConnection();
-		} catch (SQLException ex) {
-			LOG.error(Messages.ERR_CANNOT_OBTAIN_CONNECTION, ex);
-			throw new DBException(Messages.ERR_CANNOT_OBTAIN_CONNECTION, ex);
-		}
-		return con;
-	}
-	
+	/**
+	 * Delete request by id
+	 * @param requestId
+	 * 		Id request that will be delete.	
+	 * @throws AppException
+	 */
 	public void deleteRequestById(Integer requestId) throws AppException {
-		Connection con = null;
-		DriverShippingRequestRep reqRep = DriverShippingRequestRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			reqRep.deleteRequest(con, requestId);
 		}catch (SQLException ex ) {
@@ -77,12 +65,16 @@ public class RequestService {
 		
 	}
 	
+	/**
+	 * Insert request in DB
+	 * @param request
+	 * 			request that will be insert
+	 * @throws AppException
+	 */
 	public void insertRequest(DriverShippingRequest request) throws AppException {
 		
-		Connection con = null;
-		DriverShippingRequestRep reqRep = DriverShippingRequestRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			reqRep.insertRequest(con, request);
 		} catch (SQLException ex ) {
@@ -95,14 +87,18 @@ public class RequestService {
 	}
 	
 	
-
+	/**
+	 * Returns all requests.
+	 * 
+	 * @return List of driverShippingRequest models.
+	 *
+	 * @throws AppException
+	 */
 	public List<DriverShippingRequest> findAllRequest() throws AppException{
-		Connection con = null;
 		List<DriverShippingRequest> requests= null;
-		DriverShippingRequestRep requestRep = DriverShippingRequestRep.getInstance();
 		try {
-			con = getConnection();
-			requests= requestRep.findAllRequests(con);
+			con = dbManager.getConnection();
+			requests= reqRep.findAllRequests(con);
 		}catch(SQLException ex ) {
 			DBUtils.rollback(con);
 			LOG.error(Messages.ERR_CANNOT_OBTAIN_REQUESTS, ex);
@@ -113,14 +109,19 @@ public class RequestService {
 		return requests;
 	}
 	
+	/**
+	 *Returns all requests by driver id.
+	 *  
+	 * @param driverId
+	 * @return List of driverShippingRequest models.
+	 * @throws AppException
+	 */
 	public List<DriverShippingRequest> findRequestsByDriverId(Integer driverId) throws AppException{
-		Connection con = null;
 		List<DriverShippingRequest> requests= null;
-		DriverShippingRequestRep requestRep = DriverShippingRequestRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
-			requests= requestRep.findDriverShippingRequestsByDriverId(con, driverId);
+			requests= reqRep.findDriverShippingRequestsByDriverId(con, driverId);
 		}catch(SQLException ex ) {
 			LOG.error(Messages.ERR_CANNOT_OBTAIN_REQUESTS, ex);
 			throw new DBException(Messages.ERR_CANNOT_OBTAIN_REQUESTS, ex);
@@ -130,15 +131,20 @@ public class RequestService {
 		return requests;
 	}
 	
+	/**
+	 * Find request that in progress by driver id
+	 * 
+	 * @param driverId
+	 * 			Id driver who create request that will be find
+	 * @return driverShippingRequest model
+	 * @throws AppException
+	 */
 	public DriverShippingRequest findRequestInProcessByDriverId(Integer driverId) throws AppException{
-		Connection con = null;
 		DriverShippingRequest request= null;
-		ShippingRep shipRep = ShippingRep.getInstance();
-		DriverShippingRequestRep requestRep = DriverShippingRequestRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			List<Shipping> shippings = shipRep.findAllShipsInProcess(con);
-			List<DriverShippingRequest> requests = requestRep.findDriverShippingRequestsByDriverId(con, driverId);
+			List<DriverShippingRequest> requests = reqRep.findDriverShippingRequestsByDriverId(con, driverId);
 			boolean k=false;
 			for(Shipping sh : shippings) {
 				for(DriverShippingRequest req : requests) {
@@ -163,14 +169,18 @@ public class RequestService {
 		return request;
 	}
 	
+	/**
+	 * Choose request by id
+	 * @param requestId
+	 * 			Id request that will  be choose
+	 * @throws AppException
+	 */
 	public void chooseRequestByRequestId(Integer requestId) throws AppException{
 		Connection con = null;
 		DriverShippingRequest request= null;
-		DriverShippingRequestRep requestRep = DriverShippingRequestRep.getInstance();
-		ShippingRep shipRep = ShippingRep.getInstance();
 		try {
-			con = getConnection();
-			request = requestRep.findDriverShippingRequestById(con, requestId);
+			con = dbManager.getConnection();
+			request = reqRep.findDriverShippingRequestById(con, requestId);
 			shipRep.chooseRequestForShippingById(con, request.getShippingId(), requestId);
 			con.commit();
 		}catch(SQLException ex ) {
@@ -182,11 +192,18 @@ public class RequestService {
 		}
 	}
 	
+	/**
+	 * Choose car for shipping
+	 * 
+	 * @param carId
+	 * 		Id car that will be choose
+	 * @param shippingId
+	 * 		Id shipping for which will be find car
+	 * @throws AppException
+	 */
 	public void chooseCarForShipping(Integer carId, Integer shippingId) throws AppException{
-		Connection con = null;
-		ShippingRep shipRep = ShippingRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			shipRep.chooseCarForShippingById(con, carId, shippingId);
 		}catch(SQLException ex ) {
@@ -197,14 +214,19 @@ public class RequestService {
 		}
 	}
 	
+	/**
+	 * Find requests by shipping id
+	 * 
+	 * @param shippingId
+	 * @return list of driverShippingRequest models
+	 * @throws AppException
+	 */
 	public List<DriverShippingRequest> findRequestByShippingId(Integer shippingId) throws AppException{
-		Connection con = null;
 		List<DriverShippingRequest> requests= null;
-		DriverShippingRequestRep requestRep = DriverShippingRequestRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
-			requests= requestRep.findDriverShippingRequestsByShippingId(con, shippingId);
+			requests= reqRep.findDriverShippingRequestsByShippingId(con, shippingId);
 		}catch(SQLException ex ) {
 			LOG.error(Messages.ERR_CANNOT_OBTAIN_REQUESTS, ex);
 			throw new DBException(Messages.ERR_CANNOT_OBTAIN_REQUESTS, ex);
@@ -213,13 +235,17 @@ public class RequestService {
 		}
 		return requests;
 	}
-/////////////////
+
+	/**
+	 * Find firm by id
+	 * @param firmId
+	 * @return firm model
+	 * @throws AppException
+	 */
 	public Firm findFirmById(Integer firmId) throws AppException {
-		Connection con = null;
 		Firm firm =null;
-		FirmRep firmRep = FirmRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			firm = firmRep.findFirmById(con, firmId);	
 		}catch (SQLException ex ) {
@@ -231,12 +257,16 @@ public class RequestService {
 		return firm;
 	}
 	
+	/**
+	 * Find car by id
+	 * @param carId
+	 * @return car model
+	 * @throws AppException
+	 */
 	public Car findCarById(Integer carId) throws AppException {
-		Connection con = null;
 		Car car =null;
-		CarRep carRep = CarRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			car = carRep.findCarById(con, carId);	
 		}catch (SQLException ex ) {
@@ -248,12 +278,16 @@ public class RequestService {
 		return car;
 	}
 	
+	/**
+	 * Find firm by name
+	 * @param name
+	 * @return firm model
+	 * @throws AppException
+	 */
 	public Firm findFirmByName(String name) throws AppException {
-		Connection con = null;
 		Firm firm =null;
-		FirmRep firmRep = FirmRep.getInstance();
 		try {
-			con = getConnection();
+			con = dbManager.getConnection();
 			con.setAutoCommit(true);
 			firm = firmRep.findFirmByName(con, name);	
 		}catch (SQLException ex ) {
@@ -265,74 +299,4 @@ public class RequestService {
 		return firm;
 	}
 	
-	public void updateCar(Car car) throws AppException {
-		Connection con = null;
-		CarRep carRep = CarRep.getInstance();
-		try {
-			con = getConnection();
-			con.setAutoCommit(true);
-			carRep.updateCar(con, car);
-		} catch (SQLException ex ) {
-			LOG.error(Messages.ERR_CANNOT_UPDATE_CAR, ex);
-			throw new DBException(Messages.ERR_CANNOT_UPDATE_CAR, ex);
-		} finally {
-			DBUtils.close(con);
-		}
-		
-	}
-	
-	
-	
-	
-	
-	public List<Car> findAllCars() throws AppException{
-		Connection con = null;
-		List<Car> cars= null;
-		CarRep carRep = CarRep.getInstance();
-		try {
-			con = getConnection();
-			cars= carRep.findAllCars(con);
-		}catch(SQLException ex ) {
-			DBUtils.rollback(con);
-			LOG.error(Messages.ERR_CANNOT_OBTAIN_CARS, ex);
-			throw new DBException(Messages.ERR_CANNOT_OBTAIN_CARS, ex);
-		} finally {
-			DBUtils.close(con);
-		}
-		return cars;
-	}
-	
-	public List<Firm> findAllFrims() throws AppException{
-		Connection con = null;
-		List<Firm> firms= null;
-		FirmRep firmRep = FirmRep.getInstance();
-		try {
-			con = getConnection();
-			firms= firmRep.findAllFirms(con);
-		}catch(SQLException ex ) {
-			DBUtils.rollback(con);
-			LOG.error(Messages.ERR_CANNOT_OBTAIN_FIRMS, ex);
-			throw new DBException(Messages.ERR_CANNOT_OBTAIN_FIRMS, ex);
-		} finally {
-			DBUtils.close(con);
-		}
-		return firms;
-	}
-	
-	public List<Car> findAllCarsNotInTrip() throws AppException{
-		Connection con = null;
-		List<Car> cars= null;
-		CarRep carRep = CarRep.getInstance();
-		try {
-			con = getConnection();
-			cars= carRep.findAllCarsNotInTrip(con);
-		}catch(SQLException ex ) {
-			DBUtils.rollback(con);
-			LOG.error(Messages.ERR_CANNOT_OBTAIN_CARS, ex);
-			throw new DBException(Messages.ERR_CANNOT_OBTAIN_CARS, ex);
-		} finally {
-			DBUtils.close(con);
-		}
-		return cars;
-	}
 }

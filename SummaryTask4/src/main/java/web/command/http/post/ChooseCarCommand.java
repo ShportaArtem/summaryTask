@@ -15,11 +15,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Choose car command
+ * 
+ * @author A.Shporta
+ */
 public class ChooseCarCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(ChooseCarCommand.class);
 	
+	private RequestService reqServ;
+	
+	public ChooseCarCommand(RequestService reqServ) {
+		super();
+		this.reqServ = reqServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -34,7 +45,6 @@ public class ChooseCarCommand implements Command{
 		LOG.trace("Found in request parameters: flightIdForChoose --> " + flightId);
 		
 		CommandResult cr = new HttpCommandResult(RequestType.POST,Path.PAGE_REQUESTS_POST);
-		RequestService reqServ = RequestService.getInstance();
 		reqServ.chooseCarForShipping(carId, flightId);
 		LOG.trace("Choose car fro flight" );
 		

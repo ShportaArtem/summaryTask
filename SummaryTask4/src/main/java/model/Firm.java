@@ -1,7 +1,12 @@
 package model;
 
 import java.io.Serializable;
-
+/**
+ * Firm entity.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class Firm implements Serializable{
 
 	private static final long serialVersionUID = 2582997534345540024L;

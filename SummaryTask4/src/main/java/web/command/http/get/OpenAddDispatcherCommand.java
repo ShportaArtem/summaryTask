@@ -12,7 +12,11 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Open add dispatcher command
+ * 
+ * @author A.Shporta
+ */
 public class OpenAddDispatcherCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(OpenAddDispatcherCommand.class);

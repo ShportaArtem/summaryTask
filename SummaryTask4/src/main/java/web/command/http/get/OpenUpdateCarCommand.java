@@ -17,11 +17,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Open update car command
+ * 
+ * @author A.Shporta
+ */
 public class OpenUpdateCarCommand implements Command {
 	
 	private static Logger LOG = Logger.getLogger(OpenUpdateCarCommand.class);
 	
+	private CarService carServ;
+	
+	public OpenUpdateCarCommand(CarService carServ) {
+		super();
+		this.carServ = carServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -32,7 +43,6 @@ public class OpenUpdateCarCommand implements Command {
 		Integer idCar = Integer.parseInt(request.getParameter("carId"));
 		LOG.trace("Found in request parameters: carId --> " + idCar);
 		
-		CarService carServ = CarService.getInstance();
 		Car car = carServ.findCarById(idCar);
 		LOG.trace("Found in DB: car --> " + car);
 		

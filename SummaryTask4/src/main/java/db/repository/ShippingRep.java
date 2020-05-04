@@ -11,7 +11,12 @@ import java.util.List;
 
 import db.utils.DBUtils;
 import model.Shipping;
-
+/**
+ * Shipping repository. Works with table shipping in db. 
+ * 
+ * @author A.Shporta
+ *
+ */
 public class ShippingRep {
 	
 	private static final String SQL_CREATE_SHIPPING = "INSERT INTO shipping VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -26,17 +31,11 @@ public class ShippingRep {
 	private static final String SQL_CHOOSE_REQUEST_FOR_SHIPPING_BY_ID = "UPDATE shipping SET  status =?, suitable_driver_shipping_request_id=? WHERE id=?";
 	private static final String SQL_CHOOSE_CAR_FOR_SHIPPING_BY_ID = "UPDATE shipping SET car_id=? WHERE id=?";
 	
-	private static ShippingRep instance;
-	public static synchronized ShippingRep getInstance() {
-		if (instance == null) {
-			instance = new ShippingRep();
-		}
-		return instance;
-	}
-
-	private ShippingRep() {
-	}
-	
+	/**
+	 * Returns all shippings.
+	 * 
+	 * @return List of shipping models.
+	 */
 	public List<Shipping> findAllShips(Connection con) throws SQLException {
 		List<Shipping> shippings = new ArrayList<>();
 
@@ -57,6 +56,11 @@ public class ShippingRep {
 		return shippings;
 	}
 	
+	/**
+	 * Returns all shippings that in progress.
+	 * 
+	 * @return List of shipping models.
+	 */
 	public List<Shipping> findAllShipsInProcess(Connection con) throws SQLException {
 		List<Shipping> shippings = new ArrayList<>();
 
@@ -76,7 +80,11 @@ public class ShippingRep {
 		}
 		return shippings;
 	}
-	
+	/**
+	 * Returns all shippings by status.
+	 * 
+	 * @return List of shipping models.
+	 */
 	public List<Shipping> findShippingsByStatus(Connection con, String status) throws SQLException {
 		List<Shipping> shippings = new ArrayList<>();
 		PreparedStatement pstmt = null;
@@ -96,6 +104,13 @@ public class ShippingRep {
 		return shippings;
 	}
 	
+	/**
+	 * Extracts a shipping model from the result set.
+	 * 
+	 * @param rs
+	 *            Result set from which a shipping model will be extracted.
+	 * @return Shipping model
+	 */
 	private Shipping extractShipping(ResultSet rs) throws SQLException {
 		Shipping shipping = new Shipping();
 		shipping.setId(rs.getInt("id"));
@@ -110,7 +125,12 @@ public class ShippingRep {
 		return shipping;
 	}
 	
-	
+	/**
+	 * Insert a shipping to db.
+	 * 
+	 * @param shipping
+	 *            The shipping that will be insert.
+	 */
 	public boolean insertShipping(Connection con, Shipping shipping) throws SQLException { 
 		boolean res = false;
 
@@ -146,6 +166,11 @@ public class ShippingRep {
 		return res;
 	}
 	
+	/**
+	 * Choose a shippingDriverRequest for shipping.
+	 * 
+	 * @param shipping id and request id
+	 */
 	public boolean chooseRequestForShippingById(Connection con, Integer shippingId, Integer requestId) throws SQLException { 
 		boolean res = false;
 
@@ -173,7 +198,11 @@ public class ShippingRep {
 
 		return res;
 	}
-	
+	/**
+	 * Choose a car for shipping.
+	 * 
+	 * @param shipping id and car id
+	 */
 	public boolean chooseCarForShippingById(Connection con, Integer carId, Integer shippingId) throws SQLException { 
 		boolean res = false;
 
@@ -200,7 +229,13 @@ public class ShippingRep {
 
 		return res;
 	}
-	
+	/**
+	 * Update shipping.
+	 * 
+	 * @param shipping
+	 *            Shipping to update.
+	 * @throws SQLException
+	 */
 	public boolean updateShipping(Connection con, Shipping shipping) throws SQLException { 
 		boolean res = false;
 
@@ -242,7 +277,11 @@ public class ShippingRep {
 
 		return res;
 	}
-	
+	/**
+	 * Finish a shipping by id.
+	 * 
+	 * @param shipping id 
+	 */
 	public boolean finishShipping(Connection con,Integer id) throws SQLException { 
 		boolean res = false;
 
@@ -269,7 +308,11 @@ public class ShippingRep {
 		return res;
 	}
 	
-	
+	/**
+	 * Returns shipping by id.
+	 * 
+	 * @return shipping model.
+	 */
 	public Shipping findShippingById(Connection con, Integer id) throws SQLException {
 		Shipping ship = null;
 		PreparedStatement pstmt = null;
@@ -289,7 +332,11 @@ public class ShippingRep {
 		}
 		return ship;
 	}
-	
+	/**
+	 * Returns shipping by request id.
+	 * 
+	 * @return shipping model.
+	 */
 	public Shipping findShippingByRequestId(Connection con, Integer requestId) throws SQLException {
 		Shipping ship = null;
 		PreparedStatement pstmt = null;
@@ -309,7 +356,9 @@ public class ShippingRep {
 		}
 		return ship;
 	}
-	
+	/**
+	 * Cancel shipping by id.
+	 */
 	public boolean cancelShipping(Connection con, int shippingId) throws SQLException {
 		PreparedStatement pstmt = null;
 

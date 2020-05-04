@@ -10,9 +10,6 @@
   <display-name>SummaryTask4</display-name>
   <description>This is application in beta</description>
   <listener>
-  	<listener-class>web.controller.listener.InitializeSessionListiner</listener-class>
-  </listener>
-  <listener>
   	<listener-class>web.controller.listener.ContextListener</listener-class>
   </listener>
   

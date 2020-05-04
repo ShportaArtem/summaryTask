@@ -12,7 +12,11 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Open add driver command
+ * 
+ * @author A.Shporta
+ */
 public class OpenAddDriverCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(OpenAddDriverCommand.class);

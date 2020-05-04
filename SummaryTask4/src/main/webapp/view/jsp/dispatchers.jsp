@@ -21,7 +21,6 @@
     <tr>
       <th scope="col">#</th>
       <th scope="col"><fmt:message key="user.login" /></th>
-      <th scope="col"><fmt:message key="user.password" /></th>
       <th scope="col"><fmt:message key="user.name" /></th>
       <th scope="col"><fmt:message key="user.surname" /></th>
     </tr>
@@ -31,7 +30,6 @@
 	<tr>
       <th scope="row">${dispatcher1.getId()}</th>
       <td>${dispatcher1.getLogin()}</td>
-      <td>${dispatcher1.getPasswordView()}</td>
       <td>${dispatcher1.getName()}</td>
       <td>${dispatcher1.getSurname()}</td>
     </tr>

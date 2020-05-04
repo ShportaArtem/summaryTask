@@ -13,11 +13,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Delete myRequest command
+ * 
+ * @author A.Shporta
+ */
 public class DeleteMyRequestCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(DeleteMyRequestCommand.class);
 	
+	private RequestService service;
+	
+	public DeleteMyRequestCommand(RequestService service) {
+		super();
+		this.service = service;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -27,7 +38,6 @@ public class DeleteMyRequestCommand implements Command{
 		Integer myRequestId = Integer.parseInt(request.getParameter("myRequestId"));
 		LOG.trace("Found in request parameters: myRequestId --> " + myRequestId);
 		
-		RequestService service = RequestService.getInstance();
 		service.deleteRequestById(myRequestId);
 		LOG.trace("Delete request by id --> " + myRequestId);
 		

@@ -16,10 +16,21 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Update car command
+ * 
+ * @author A.Shporta
+ */
 public class UpdateCarCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(UpdateCarCommand.class);
+	
+	private CarService carServ;
+	
+	public UpdateCarCommand(CarService carServ) {
+		super();
+		this.carServ = carServ;
+	}
 
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
@@ -28,7 +39,6 @@ public class UpdateCarCommand implements Command{
 		LOG.debug("Command starts");
 		
 		HttpSession session = request.getSession();
-		CarService carServ = CarService.getInstance();
 		Car carNow = (Car) session.getAttribute("carNow");
 		LOG.trace("Found in session atrubutes: carNow --> " + carNow);
 		

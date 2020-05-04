@@ -11,6 +11,12 @@ import java.util.List;
 import db.utils.DBUtils;
 import model.Car;
 
+/**
+ * Car repository. Works with table car in db. 
+ * 
+ * @author A.Shporta
+ *
+ */
 public class CarRep {
 	
 	private static final String SQL_CREATE_CAR = "INSERT INTO car VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
@@ -22,17 +28,12 @@ public class CarRep {
 	private static final String SQL_UPDATE_CAR_BY_ID = "UPDATE car SET car_model=?, carrying_capacity=?, passengers_capacity=?, car_firm_id=?, statusCar=?,vehicle_condition=? WHERE id=?";  
 	private static final String SQL_UPDATE_CAR_VEHICLE_CONDITION_BY_ID = "UPDATE car SET statusCar=?,vehicle_condition=? WHERE id=?";  
 	
-	private static CarRep instance;
-	public static synchronized CarRep getInstance() {
-		if (instance == null) {
-			instance = new CarRep();
-		}
-		return instance;
-	}
 
-	private CarRep() {
-	}
-	
+	/**
+	 * Returns all cars.
+	 * 
+	 * @return List of car models.
+	 */
 	public List<Car> findAllCars(Connection con) throws SQLException{
 		List<Car> users = new ArrayList<>();
 
@@ -53,6 +54,13 @@ public class CarRep {
 		return users;
 	}
 	
+	/**
+	 * Update car.
+	 * 
+	 * @param car
+	 *            car to update.
+	 * @throws SQLException
+	 */
 	public boolean updateCar(Connection con, Car car) throws SQLException { 
 		boolean res = false;
 
@@ -85,6 +93,10 @@ public class CarRep {
 		return res;
 	}
 	
+	/**
+	 * Finish trip by driver.
+	 * 
+	 */
 	public boolean finishTrip(Connection con, String vehicle, Integer status, Integer id) throws SQLException { 
 		boolean res = false;
 
@@ -113,6 +125,11 @@ public class CarRep {
 		return res;
 	}
 	
+	/**
+	 * Returns all cars that not in trip.
+	 * 
+	 * @return List of car models.
+	 */
 	public List<Car> findAllCarsNotInTrip(Connection con) throws SQLException{
 		List<Car> users = new ArrayList<>();
 
@@ -133,6 +150,11 @@ public class CarRep {
 		return users;
 	}
 	
+	/**
+	 * Find car by model and status.
+	 * 
+	 * @return car model.
+	 */
 	public Car findCarByModelAndStatus(Connection con,String model, Integer status) throws SQLException {
 		Car car = null;
 		PreparedStatement pstmt = null;
@@ -154,6 +176,11 @@ public class CarRep {
 		return car;
 	}
 	
+	/**
+	 * Find car by id.
+	 * 
+	 * @return car model.
+	 */
 	public Car findCarById(Connection con, Integer id) throws SQLException {
 		Car car = null;
 		PreparedStatement pstmt = null;
@@ -174,6 +201,14 @@ public class CarRep {
 		return car;
 	}
 	
+	
+	/**
+	 * Extracts a car model from the result set.
+	 * 
+	 * @param rs
+	 *            Result set from which a car model will be extracted.
+	 * @return Car model
+	 */
 	private Car extractCar(ResultSet rs) throws SQLException {
 		Car car = new Car();
 		car.setId(rs.getInt("id"));
@@ -186,7 +221,12 @@ public class CarRep {
 		return car;
 	}
 	
-	
+	/**
+	 * Insert a car to db.
+	 * 
+	 * @param car
+	 *            The car that will be insert.
+	 */
 	public boolean insertCar(Connection con, Car car) throws SQLException { 
 		boolean res = false;
 
@@ -221,7 +261,12 @@ public class CarRep {
 	}
 
 	
-
+	/**
+	 * Delete a car from db.
+	 * 
+	 * @param car
+	 *            The car that will be delete.
+	 */
 	public boolean deleteCar(Connection con, int carId) throws SQLException {
 		PreparedStatement pstmt = null;
 

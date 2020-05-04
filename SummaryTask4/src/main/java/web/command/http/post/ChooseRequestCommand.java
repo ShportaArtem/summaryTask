@@ -15,11 +15,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Choose request command
+ * 
+ * @author A.Shporta
+ */
 public class ChooseRequestCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(ChooseRequestCommand.class);
 	
+	private RequestService reqServ;
+	
+	public ChooseRequestCommand(RequestService reqServ) {
+		super();
+		this.reqServ = reqServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -27,7 +38,6 @@ public class ChooseRequestCommand implements Command{
 		LOG.debug("Command starts");
 		
 		HttpSession session = request.getSession();
-		RequestService reqServ = RequestService.getInstance();
 		Integer requestId = Integer.parseInt(request.getParameter("requestId"));
 		LOG.trace("Found in request parameters: requestId --> " + requestId);
 		

@@ -15,10 +15,23 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Add car command
+ * 
+ * @author A.Shporta
+ */
 public class AddCarCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(AddCarCommand.class);
+	
+	private CarService carServ;
+	
+	
+	public AddCarCommand(CarService carServ) {
+		super();
+		this.carServ = carServ;
+	}
+
 
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
@@ -27,7 +40,6 @@ public class AddCarCommand implements Command{
 		LOG.debug("Command starts");
 		
 		HttpSession session = request.getSession();
-		CarService carServ = CarService.getInstance();
 		String model = request.getParameter("model");
 		LOG.trace("Found in request parameters: model --> " + model);
 		

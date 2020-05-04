@@ -15,26 +15,38 @@ import model.DriverShippingRequest;
 import modelView.RequestView;
 import service.LoginService;
 import service.RequestService;
+import utils.ExtractUtils;
 import web.Path;
 import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Open choose driver command
+ * 
+ * @author A.Shporta
+ */
 public class OpenChooseDriverCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(OpenChooseDriverCommand.class);
 	
+	private RequestService requestServ;
+	private LoginService loginService;
+
+	public OpenChooseDriverCommand(RequestService requestServ, LoginService loginService) {
+		this.requestServ = requestServ;
+		this.loginService = loginService;
+	}
+	
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
-
+		
 		LOG.debug("Command starts");
 		
 		HttpSession session = request.getSession(false);
 		
 		CommandResult cr = new HttpCommandResult(RequestType.GET,  Path.PAGE_REQUESTS);
-		RequestService requestServ = RequestService.getInstance();
 		Integer flightId=null;
 		int chooseRequestStage= Integer.parseInt(request.getParameter("chooseStage"));
 		if(chooseRequestStage==1) {
@@ -53,7 +65,7 @@ public class OpenChooseDriverCommand implements Command{
 		List<RequestView> requestsView = new ArrayList<>();
 		int methodRequests = 1;
 		for(DriverShippingRequest req : requests) {
-			requestsView.add(extractRequestView(req));
+			requestsView.add(ExtractUtils.extractRequestView(req, loginService));
 		}
 		session.setAttribute("methodRequests", methodRequests);
 		LOG.trace("Set the session attribute: methodRequests --> " + methodRequests);
@@ -71,17 +83,6 @@ public class OpenChooseDriverCommand implements Command{
 		return cr;
 	}
 	
-	private RequestView extractRequestView(DriverShippingRequest req) throws AppException {
-		RequestView view = new RequestView();
-		view.setCarryinfCapacity(req.getCarryinfCapacity());
-		view.setId(req.getId());
-		view.setPassangersCapacity(req.getPassangersCapacity());
-		view.setVehicleCondition(req.getVehicleCondition());
-		view.setShippingId(req.getShippingId());
-		LoginService logServ = LoginService.getInstance();
-		
-		view.setDriverLogin(logServ.findUserById(req.getDriverId()).getLogin());
-		return view;
-	}
+	
 	
 }

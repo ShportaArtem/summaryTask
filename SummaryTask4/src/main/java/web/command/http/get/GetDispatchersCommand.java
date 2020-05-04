@@ -17,10 +17,21 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Get dispatchers command
+ * 
+ * @author A.Shporta
+ */
 public class GetDispatchersCommand implements Command{
 
 	private static final Logger LOG = Logger.getLogger(GetDispatchersCommand.class);
+	
+	private DriverService driverServ;
+	
+	public GetDispatchersCommand(DriverService driverServ) {
+		super();
+		this.driverServ = driverServ;
+	}
 
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
@@ -30,7 +41,6 @@ public class GetDispatchersCommand implements Command{
 		
 		HttpSession session = request.getSession(false);
 		CommandResult cr = new HttpCommandResult(RequestType.GET,  Path.PAGE_DISPATCHERS);
-		DriverService driverServ = DriverService.getInstance();
 		List<User> dispatchers = driverServ.findAllUsersByRoleId(3);
 		LOG.trace("Found in DB: dispatchers --> " + dispatchers);
 		int methodDispatcher = 1;

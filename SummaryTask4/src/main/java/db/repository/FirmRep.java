@@ -10,24 +10,23 @@ import java.util.List;
 
 import db.utils.DBUtils;
 import model.Firm;
-
+/**
+ * Firm repository. Works with table firm in db. 
+ * 
+ * @author A.Shporta
+ *
+ */
 public class FirmRep {
 	private static final String SQL_CREATE_FIRM = "INSERT INTO firm VALUES (DEFAULT, ?)";
 	private static final String SQL_FIND_ALL_FIRMS="SELECT * FROM firm";
 	private static final String SQL_FIND_FIRM_BY_ID="SELECT * FROM firm WHERE id=?";
 	private static final String SQL_FIND_FIRM_BY_NAME="SELECT * FROM firm WHERE name=?";
 	
-	private static FirmRep instance;
-	public static synchronized FirmRep getInstance() {
-		if (instance == null) {
-			instance = new FirmRep();
-		}
-		return instance;
-	}
-
-	private FirmRep() {
-	}
-	
+	/**
+	 * Returns all firms.
+	 * 
+	 * @return List of firm models.
+	 */
 	public List<Firm> findAllFirms(Connection con) throws SQLException {
 		List<Firm> firms = new ArrayList<>();
 
@@ -49,14 +48,24 @@ public class FirmRep {
 	}
 	
 	
-	
+	/**
+	 * Extracts a firm model from the result set.
+	 * 
+	 * @param rs
+	 *            Result set from which a firm model will be extracted.
+	 * @return Firm model
+	 */
 	private Firm extractFirm(ResultSet rs) throws SQLException {
 		Firm firm = new Firm();
 		firm.setId(rs.getInt("id"));
 		firm.setName(rs.getString("name"));
 		return firm;
 	}
-	
+	/**
+	 * Find firm by id.
+	 * 
+	 * @return firm model.
+	 */
 	public Firm findFirmById(Connection con, int id) throws SQLException {
 		Firm firm= null;
 		PreparedStatement pstmt = null;
@@ -69,7 +78,11 @@ public class FirmRep {
 			}
 		return firm;
 	}
-	
+	/**
+	 * Find firm by name.
+	 * 
+	 * @return firm model.
+	 */
 	public Firm findFirmByName(Connection con, String name) throws SQLException {
 		Firm firm= null;
 		PreparedStatement pstmt = null;
@@ -82,7 +95,12 @@ public class FirmRep {
 			}
 		return firm;
 	}
-	
+	/**
+	 * Insert a firm to db.
+	 * 
+	 * @param firm
+	 *            The firm that will be insert.
+	 */
 	public boolean insertFirm(Connection con, Firm firm) throws SQLException { 
 		boolean res = false;
 

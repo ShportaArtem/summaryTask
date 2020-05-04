@@ -17,11 +17,24 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Add flight command
+ * 
+ * @author A.Shporta
+ */
 public class AddFlightCommand implements Command {
 
 	private static Logger LOG = Logger.getLogger(AddFlightCommand.class);
 	
+	private FlightService flightServ;
+	
+	
+	public AddFlightCommand(FlightService flightServ) {
+		super();
+		this.flightServ = flightServ;
+	}
+
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -42,7 +55,6 @@ public class AddFlightCommand implements Command {
 		Date departureTime = Date.valueOf(request.getParameter("departureDate"));
 		LOG.trace("Found in request parameters: departureDate --> " + departureTime);
 		
-		FlightService flightServ = FlightService.getInstance();
 		flightServ.insertShipping(dispathcerId, arrivalCity, departureCity, departureTime);
 		LOG.trace("Insert in DB flight" );
 

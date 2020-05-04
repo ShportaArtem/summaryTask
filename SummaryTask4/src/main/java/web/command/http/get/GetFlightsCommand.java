@@ -11,22 +11,36 @@ import org.apache.log4j.Logger;
 
 import db.exception.AppException;
 import db.exception.DBException;
-import model.Car;
 import model.Shipping;
 import model.User;
 import modelView.ShippingView;
 import service.CarService;
 import service.FlightService;
 import service.LoginService;
+import utils.ExtractUtils;
 import web.Path;
 import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Get flights command
+ * 
+ * @author A.Shporta
+ */
 public class GetFlightsCommand implements Command{
 	
 	private static Logger LOG = Logger.getLogger(GetFlightsCommand.class);
+	private LoginService logServ;
+	private FlightService flightServ;
+	private CarService carService;
+	
+	public GetFlightsCommand(LoginService logServ, FlightService flightServ, CarService carService) {
+		this.flightServ = flightServ;
+		this.logServ = logServ;
+		this.carService = carService;
+	}
+	
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -35,8 +49,6 @@ public class GetFlightsCommand implements Command{
 		
 		HttpSession session = request.getSession(false);
 		CommandResult cr = new HttpCommandResult(RequestType.GET,  Path.PAGE_FLIGHTS);
-		LoginService logServ = LoginService.getInstance();
-		FlightService flightServ = FlightService.getInstance();
 		List<Shipping> shippings = flightServ.findAllShips();
 		LOG.trace("Found in DB: shippings --> " + shippings);
 		
@@ -58,7 +70,7 @@ public class GetFlightsCommand implements Command{
 			}
 		
 		for (Shipping ship : shippings) {
-			ShippingView sh = extractShippingView(ship,logServ, flightServ);
+			ShippingView sh = ExtractUtils.extractShippingView(ship,logServ, flightServ, carService);
 			shippingsViews.add(sh);
 		}
 		session.setAttribute("shippings", shippings);
@@ -82,29 +94,5 @@ public class GetFlightsCommand implements Command{
 		return cr;
 	}
 
-	private ShippingView extractShippingView(Shipping ship, LoginService logServ, FlightService flightServ) throws AppException {
-		ShippingView sh = new ShippingView();
-		sh.setArrivalCity(ship.getArrivalCity());
-		if(ship.getCarId()!=0) {
-			CarService carServ = CarService.getInstance();
-			Car car = carServ.findCarById(ship.getCarId());
-			sh.setCarId(car.getModel());
-		}else {
-			sh.setCarId("In search");
-		}
-		sh.setCreationTimestamp(ship.getCreationTimestamp());
-		sh.setDepartureCity(ship.getDepartureCity());
-		User us = logServ.findUserById(ship.getDispathcerId());
-		sh.setDispatcherLogin(us.getLogin());
-		if (ship.getDriverShippngRequestId() == 0) {
-			sh.setDriverShippngRequestId("In search");
-		} else {
-			User driver = flightServ.findUserByShippingRequestId(ship.getDriverShippngRequestId());
-			sh.setDriverShippngRequestId(driver.getLogin());
-		}
-		sh.setId(ship.getId());
-		sh.setStatus(ship.getStatus());
-		sh.setDepartureTime(ship.getDepartureTime());
-		return sh;
-	}
+	
 }

@@ -3,7 +3,12 @@ package model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
-
+/**
+ * Shipping entity.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class Shipping implements Serializable{
 
 	private static final long serialVersionUID = -8838361035691691947L;

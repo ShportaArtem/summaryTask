@@ -12,7 +12,12 @@ import java.util.List;
 import db.utils.DBUtils;
 import model.User;
 
-
+/**
+ * User repository. Works with table users in db. 
+ * 
+ * @author A.Shporta
+ *
+ */
 public class UserRep {
 	
 	private static final String SQL_CREATE_USER = "INSERT INTO users VALUES (DEFAULT, ?, ?, ?, ?, ?)";
@@ -23,18 +28,12 @@ public class UserRep {
 	private static final String SQL_FIND_USER_BY_ID = "SELECT * FROM users WHERE id=?";
 	private static final String SQL_UPDATE_USER_BY_ID = "UPDATE users SET login=?, password=?, name=?, surname=? WHERE id=?";
 	
-	private static UserRep instance;
-	public static synchronized UserRep getInstance() {
-		if (instance == null) {
-			instance = new UserRep();
-		}
-		return instance;
-	}
-
-	private UserRep() {
-	}
-	
-	public List<User> findAllUsers(Connection con) throws SQLException, NoSuchAlgorithmException {
+	/**
+	 * Returns all users.
+	 * 
+	 * @return List of user models.
+	 */
+	public List<User> findAllUsers(Connection con) throws SQLException {
 		List<User> users = new ArrayList<>();
 
 		Statement stmt = null;
@@ -53,7 +52,13 @@ public class UserRep {
 		}
 		return users;
 	}
-	
+	/**
+	 * Update user.
+	 * 
+	 * @param user
+	 *            user to update.
+	 * @throws SQLException
+	 */
 	public boolean updateUserById(Connection con, User user) throws SQLException { 
 		boolean res = false;
 
@@ -65,7 +70,7 @@ public class UserRep {
 
 			int k = 1;
 			pstmt.setString(k++, user.getLogin());
-			pstmt.setString(k++, user.getPasswordView());
+			pstmt.setString(k++, user.getPassword());
 			pstmt.setString(k++, user.getName());
 			pstmt.setString(k++, user.getSurname());
 			pstmt.setInt(k++, user.getId());
@@ -83,7 +88,11 @@ public class UserRep {
 
 		return res;
 	}
-	
+	/**
+	 * Returns all users by role id.
+	 * 
+	 * @return List of user models.
+	 */
 	public List<User> findAllUsersByRoleId(Connection con, Integer roleId) throws SQLException, NoSuchAlgorithmException {
 		List<User> users = new ArrayList<>();
 
@@ -103,8 +112,12 @@ public class UserRep {
 			}
 		return users;
 	}
-	
-	public User findUserById(Connection con, int id) throws SQLException, NoSuchAlgorithmException {
+	/**
+	 * Returns user by id.
+	 * 
+	 * @return User model.
+	 */
+	public User findUserById(Connection con, int id) throws SQLException {
 		User user = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -116,8 +129,12 @@ public class UserRep {
 			}
 		return user;
 	}
-	
-	public User findUserByLogin(Connection con,String login) throws SQLException, NoSuchAlgorithmException {
+	/**
+	 * Returns user by login.
+	 * 
+	 * @return User model.
+	 */
+	public User findUserByLogin(Connection con,String login) throws SQLException{
 		User user = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -129,8 +146,14 @@ public class UserRep {
 			}
 		return user;
 	}
-	
-	private User extractUser(ResultSet rs) throws SQLException, NoSuchAlgorithmException {
+	/**
+	 * Extracts a user model from the result set.
+	 * 
+	 * @param rs
+	 *            Result set from which a user model will be extracted.
+	 * @return User model
+	 */
+	private User extractUser(ResultSet rs) throws SQLException {
 		User user = new User();
 		user.setId(rs.getInt("id"));
 		user.setRoleId(rs.getInt("role_id"));
@@ -141,7 +164,12 @@ public class UserRep {
 		return user;
 	}
 	
-	
+	/**
+	 * Insert a user to db.
+	 * 
+	 * @param user
+	 *            The user that will be insert.
+	 */
 	public User insertUser(Connection con, User user) throws SQLException { 
 
 		PreparedStatement pstmt = null;
@@ -153,7 +181,7 @@ public class UserRep {
 			int k = 1;
 			pstmt.setInt(k++, user.getRoleId());
 			pstmt.setString(k++, user.getLogin());
-			pstmt.setString(k++, user.getPasswordView());
+			pstmt.setString(k++, user.getPassword());
 			pstmt.setString(k++, user.getName());
 			pstmt.setString(k++, user.getSurname());
 
@@ -173,7 +201,12 @@ public class UserRep {
 	}
 
 	
-
+	/**
+	 * Delete a user from db.
+	 * 
+	 * @param user id
+	 *            The user id that will be delete.
+	 */
 	public boolean deleteUser(Connection con, int userId) throws SQLException {
 		PreparedStatement pstmt = null;
 

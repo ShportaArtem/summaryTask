@@ -15,10 +15,23 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Add driver command
+ * 
+ * @author A.Shporta
+ */
 public class AddDriverCommand implements Command{
 	
 	private static Logger LOG = Logger.getLogger(AddDriverCommand.class);
+	
+	private DriverService driverServ;
+	
+	
+	public AddDriverCommand(DriverService driverServ) {
+		super();
+		this.driverServ = driverServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -26,7 +39,6 @@ public class AddDriverCommand implements Command{
 		LOG.debug("Command starts");
 		
 		HttpSession session = request.getSession();
-		DriverService driverServ = DriverService.getInstance();
 		String login = request.getParameter("login");
 		LOG.trace("Found in request parameters: login --> " + login);
 		

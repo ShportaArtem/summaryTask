@@ -8,7 +8,14 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import modelView.ShippingView;
 
+/**
+ * Tag for sort flights
+ * @author A.Shporta
+ *
+ */
 public class SortTag extends TagSupport{
+	
+	private static final long serialVersionUID = 4916192782255838077L;
 	private String sortType;
 	
 	public void setSortType(String sortType) {
@@ -17,6 +24,7 @@ public class SortTag extends TagSupport{
 	
 	public int doStartTag() {
 			HttpSession session = pageContext.getSession();
+			@SuppressWarnings("unchecked")
 			List<ShippingView> shippingsView = (List<ShippingView>) session.getAttribute("shippingsViews");
 			switch(sortType) {
 				case "id":

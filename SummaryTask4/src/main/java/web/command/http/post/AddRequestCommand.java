@@ -17,11 +17,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Add request command
+ * 
+ * @author A.Shporta
+ */
 public class AddRequestCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(AddRequestCommand.class);
 	
+	private RequestService reqServ;
+	
+	public AddRequestCommand(RequestService reqServ) {
+		super();
+		this.reqServ = reqServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -29,7 +40,6 @@ public class AddRequestCommand implements Command{
 		LOG.debug("Command starts");
 		
 		HttpSession session = request.getSession();
-		RequestService reqServ = RequestService.getInstance();
 		DriverShippingRequest req = new DriverShippingRequest();
 		User driverNow = (User) session.getAttribute("user");
 		LOG.trace("Found in session atriburte: user --> " + driverNow);

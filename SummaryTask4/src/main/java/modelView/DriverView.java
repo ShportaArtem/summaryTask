@@ -1,5 +1,10 @@
 package modelView;
-
+/**
+ * View for driver entity.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class DriverView {
 	
 	private int id;

@@ -21,7 +21,12 @@ import org.apache.log4j.Logger;
 import web.Path;
 
 
-
+/**
+ * Security filter.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class CommandAccessFilter implements Filter {
 	
 	private static final Logger LOG = Logger.getLogger(CommandAccessFilter.class);
@@ -93,6 +98,13 @@ public class CommandAccessFilter implements Filter {
 		LOG.debug("Filter initialization finished");
 	}
 	
+	/**
+	 * Extracts parameter values from string.
+	 * 
+	 * @param str
+	 *            parameter values string.
+	 * @return list of parameter values.
+	 */
 	private List<String> asList(String str) {
 		List<String> list = new ArrayList<String>();
 		StringTokenizer st = new StringTokenizer(str);

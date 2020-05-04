@@ -1,6 +1,5 @@
 package web.command.http.get;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +22,26 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Open update flight command
+ * 
+ * @author A.Shporta
+ */
 public class OpenUpdateFlightCommand implements Command {
 	
 	private static Logger LOG = Logger.getLogger(OpenUpdateFlightCommand.class);
+	
+	private FlightService flightServ;
+	private LoginService logServ;
+	private CarService carServ;
+	
+	public OpenUpdateFlightCommand(FlightService flightServ, LoginService logServ, CarService carServ) {
+		super();
+		this.flightServ = flightServ;
+		this.logServ = logServ;
+		this.carServ = carServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -37,8 +52,6 @@ public class OpenUpdateFlightCommand implements Command {
 		Integer idFlight = Integer.parseInt(request.getParameter("flightId"));
 		LOG.trace("Found in request parameters: flightId --> " + idFlight);
 		
-		FlightService flightServ = FlightService.getInstance();
-		LoginService logServ = LoginService.getInstance();
 		Shipping ship = flightServ.findFlightById(idFlight);
 		LOG.trace("Found in DB: ship --> " + ship);
 		
@@ -69,7 +82,6 @@ public class OpenUpdateFlightCommand implements Command {
 		session.setAttribute("flightNow", ship);
 		LOG.trace("Set the session attribute: flightNow --> " + ship);
 		
-		CarService carServ = CarService.getInstance();
 		List<Car> cars = carServ.findAllCarsNotInTrip();
 		LOG.trace("Found in DB: cars --> " + cars );
 		
@@ -77,14 +89,8 @@ public class OpenUpdateFlightCommand implements Command {
 		LOG.trace("Set the session attribute: cars --> " + cars);
 		
 		List<User> usersByRequest=null;
-		try {
 			usersByRequest= flightServ.findUsersByShippingId(idFlight);
 			LOG.trace("Found in DB: usersByRequest --> " + usersByRequest );
-			
-		} catch (NoSuchAlgorithmException e) {
-			LOG.error(e);
-			e.printStackTrace();
-		}
 		session.setAttribute("usersByRequest",usersByRequest );
 		LOG.trace("Set the session attribute: usersByRequest --> " + usersByRequest);
 		

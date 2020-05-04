@@ -1,6 +1,11 @@
 package db.exception;
 
-
+/**
+ * Holder for messages of exceptions.
+ * 
+ * @author A.Shporta
+ *
+ */
 public class Messages {
 
 	private Messages() {

@@ -13,11 +13,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Delete car command
+ * 
+ * @author A.Shporta
+ */
 public class DeleteCarCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(DeleteCarCommand.class);
 	
+	private CarService service;
+	
+	public DeleteCarCommand(CarService service) {
+		super();
+		this.service = service;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -27,7 +38,6 @@ public class DeleteCarCommand implements Command{
 		Integer idCar= Integer.parseInt(request.getParameter("carId"));
 		LOG.trace("Found in request parameters: carId --> " + idCar);
 		
-		CarService service = CarService.getInstance();
 		service.deleteCartById(idCar);
 		LOG.trace("Delete car by id --> " + idCar);
 		

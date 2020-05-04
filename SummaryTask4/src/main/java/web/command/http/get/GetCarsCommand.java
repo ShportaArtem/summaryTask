@@ -15,16 +15,28 @@ import model.Car;
 import model.Firm;
 import modelView.CarView;
 import service.CarService;
+import utils.ExtractUtils;
 import web.Path;
 import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Get cars command
+ * 
+ * @author A.Shporta
+ */
 public class GetCarsCommand implements Command{
 	
 	private static final Logger LOG = Logger.getLogger(GetCarsCommand.class);
 	
+	private CarService carServ;
+	
+	public GetCarsCommand(CarService carServ) {
+		super();
+		this.carServ = carServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -33,12 +45,11 @@ public class GetCarsCommand implements Command{
 		
 		HttpSession session = request.getSession(false);
 		CommandResult cr = new HttpCommandResult(RequestType.GET,  Path.PAGE_CARS);
-		CarService carServ = CarService.getInstance();
 		List<Car> cars = carServ.findAllCars();
 		LOG.trace("Found in DB: cars --> " + cars);
 		List<CarView> carViews = new ArrayList<>();
 		for (Car car: cars) {
-			CarView carV= extractCarView(car,carServ);
+			CarView carV= ExtractUtils.extractCarView(car,carServ);
 			carViews.add(carV);
 		}
 		List<Car> carsNotUsed = carServ.findAllCarsNotInTrip();
@@ -58,20 +69,4 @@ public class GetCarsCommand implements Command{
 		return cr;
 	}
 	
-	private CarView extractCarView(Car car, CarService carServ) throws AppException {
-		CarView carV = new CarView();
-		carV.setId(car.getId());
-		carV.setCarryingCapacity(car.getCarryinfCapacity());
-		carV.setFirmName(carServ.findFirmById(car.getFirmId()).getName());
-		carV.setModel(car.getModel());
-		if(car.getStatus()==0) {
-			carV.setStatus("Parked");
-		}else {
-			carV.setStatus("In trip");
-		}
-		carV.setPassangersCapacity(car.getPassangersCapacity());
-		carV.setVehicleCondition(car.getVehicleCondition());
-		
-		return carV;
-	}
 }

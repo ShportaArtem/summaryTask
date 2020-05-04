@@ -11,21 +11,34 @@ import org.apache.log4j.Logger;
 
 import db.exception.AppException;
 import db.exception.DBException;
-import model.Driver;
 import model.User;
 import modelView.DriverView;
 import service.DriverService;
 import service.RequestService;
+import utils.ExtractUtils;
 import web.Path;
 import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Get drivers command
+ * 
+ * @author A.Shporta
+ */
 public class GetDriversCommand implements Command{
 	
 	private static Logger LOG = Logger.getLogger(GetDriversCommand.class);
 	
+	private DriverService driverServ;
+	private RequestService reqServ;
+	
+	public GetDriversCommand(DriverService driverServ, RequestService reqServ) {
+		super();
+		this.driverServ = driverServ;
+		this.reqServ = reqServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -34,15 +47,13 @@ public class GetDriversCommand implements Command{
 		
 		HttpSession session = request.getSession(false);
 		CommandResult cr = new HttpCommandResult(RequestType.GET,  Path.PAGE_DRIVERS);
-		DriverService driverServ = DriverService.getInstance();
 		List<User> users = driverServ.findAllUsersByRoleId(2);
 		LOG.trace("Found in DB: users --> " + users);
 		
 		List<DriverView> driverViews = new ArrayList<>();
 		for(User us : users) {
-			driverViews.add(extractDriverView(us, driverServ));
+			driverViews.add(ExtractUtils.extractDriverView(us, driverServ));
 		}
-		RequestService reqServ = RequestService.getInstance();
 		List<User> driversNotUsed = driverServ.findAllUsersByRoleId(2);
 		LOG.trace("Found in DB: driversNotUsed --> " + driversNotUsed );
 		
@@ -66,16 +77,5 @@ public class GetDriversCommand implements Command{
 		return cr;
 	}
 	
-	private DriverView extractDriverView( User userD, DriverService driverServ) throws AppException {
-		DriverView driverV = new DriverView();
-		Driver driver = driverServ.findDriverByUserId(userD.getId());
-		driverV.setId(userD.getId());
-		driverV.setLogin(userD.getLogin());
-		driverV.setName(userD.getName());
-		driverV.setPassword(userD.getPasswordView());
-		driverV.setSurname(userD.getSurname());
-		driverV.setPassport(driver.getPassport());
-		driverV.setPhone(driver.getPhone());
-		return driverV;
-	}
+	
 }

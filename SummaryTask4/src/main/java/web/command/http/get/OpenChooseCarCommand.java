@@ -14,16 +14,28 @@ import db.exception.DBException;
 import model.Car;
 import modelView.CarView;
 import service.CarService;
+import utils.ExtractUtils;
 import web.Path;
 import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Open choose car command
+ * 
+ * @author A.Shporta
+ */
 public class OpenChooseCarCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(OpenChooseCarCommand.class);
 	
+	private CarService carServ;
+	
+	public OpenChooseCarCommand(CarService carServ) {
+		super();
+		this.carServ = carServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -33,13 +45,12 @@ public class OpenChooseCarCommand implements Command{
 		HttpSession session = request.getSession(false);
 		CommandResult cr = new HttpCommandResult(RequestType.GET,  Path.PAGE_CHOOSE_CAR);
 		int methodChooseCar = 1;
-		CarService carServ = CarService.getInstance();
 		List<Car> carsNotUsed = carServ.findAllCarsNotInTrip();
 		LOG.trace("Found in DB: users --> " + carsNotUsed);
 		
 		List<CarView> carViews = new ArrayList<>();
 		for (Car car: carsNotUsed) {
-			CarView carV= extractCarView(car,carServ);
+			CarView carV= ExtractUtils.extractCarView(car,carServ);
 			carViews.add(carV);
 		}
 		session.setAttribute("methodChooseCar", methodChooseCar);
@@ -52,21 +63,5 @@ public class OpenChooseCarCommand implements Command{
 		return cr;
 	}
 	
-	private CarView extractCarView(Car car, CarService carServ) throws AppException {
-		CarView carV = new CarView();
-		carV.setId(car.getId());
-		carV.setCarryingCapacity(car.getCarryinfCapacity());
-		carV.setFirmName(carServ.findFirmById(car.getFirmId()).getName());
-		carV.setModel(car.getModel());
-		if(car.getStatus()==0) {
-			carV.setStatus("Parked");
-		}else {
-			carV.setStatus("In trip");
-		}
-		carV.setPassangersCapacity(car.getPassangersCapacity());
-		carV.setVehicleCondition(car.getVehicleCondition());
-
-		LOG.debug("Commands finished");
-		return carV;
-	}
+	
 }

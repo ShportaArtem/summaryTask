@@ -9,23 +9,21 @@ import java.sql.SQLException;
 
 import db.utils.DBUtils;
 import model.Role;
-
+/**
+ * Role repository. Works with table role in db. 
+ * 
+ * @author A.Shporta
+ *
+ */
 public class RoleRep {
 	
 	private static final String SQL_FIND_ROLE_BY_ID = "SELECT * FROM role WHERE id = ?";
 	
-	private static RoleRep instance;
-	public static synchronized RoleRep getInstance() {
-		if (instance == null) {
-			instance = new RoleRep();
-		}
-		return instance;
-	}
-
-	private RoleRep() {
-	}
-	
-	
+	/**
+	 * Find role by id.
+	 * 
+	 * @return role model.
+	 */
 	public Role findRole(Connection con, int roleId) throws SQLException{ 
 		Role role = null;
 
@@ -46,7 +44,13 @@ public class RoleRep {
 		return role;
 	}
 
-	
+	/**
+	 * Extracts a role model from the result set.
+	 * 
+	 * @param rs
+	 *            Result set from which a role model will be extracted.
+	 * @return Role model
+	 */
 	private Role extractRole(ResultSet rs) throws SQLException {
 		Role role= new Role();
 		role.setId(rs.getInt("id"));

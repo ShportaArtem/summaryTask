@@ -21,7 +21,6 @@
     <tr>
       <th scope="col">#</th>
      <th scope="col"><fmt:message key="user.login" /></th>
-      <th scope="col"><fmt:message key="user.password" /></th>
       <th scope="col"><fmt:message key="user.name" /></th>
       <th scope="col"><fmt:message key="user.surname" /></th>
       <th scope="col"><fmt:message key="driver.passport" /></th>
@@ -33,7 +32,6 @@
 	<tr>
       <th scope="row">${driver.getId()}</th>
       <td>${driver.getLogin()}</td>
-      <td>${driver.getPassword()}</td>
       <td>${driver.getName()}</td>
       <td>${driver.getSurname()}</td>
       <td>${driver.getPassport()}</td>

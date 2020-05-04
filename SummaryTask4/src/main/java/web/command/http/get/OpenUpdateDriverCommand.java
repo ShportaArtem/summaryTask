@@ -18,9 +18,23 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Open update driver command
+ * 
+ * @author A.Shporta
+ */
 public class OpenUpdateDriverCommand implements Command {
 	private static Logger LOG = Logger.getLogger(OpenUpdateDriverCommand.class);
+	
+	private DriverService driverServ;
+	private LoginService loginServ;
+	
+	public OpenUpdateDriverCommand(DriverService driverServ, LoginService loginServ) {
+		super();
+		this.driverServ = driverServ;
+		this.loginServ = loginServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -31,8 +45,6 @@ public class OpenUpdateDriverCommand implements Command {
 		String login = request.getParameter("driverLogin");
 		LOG.trace("Found in request parameters: driverLogin --> " + login);
 		
-		DriverService driverServ = DriverService.getInstance();
-		LoginService loginServ = LoginService.getInstance();
 		User userDriverNow = loginServ.findUserByLogin(login);
 		LOG.trace("Found in DB: userDriverNow --> " + userDriverNow);
 		
@@ -44,7 +56,7 @@ public class OpenUpdateDriverCommand implements Command {
 		driverView.setLogin(userDriverNow.getLogin());
 		driverView.setName(userDriverNow.getName());
 		driverView.setPassport(driverNow.getPassport());
-		driverView.setPassword(userDriverNow.getPasswordView());
+		driverView.setPassword(userDriverNow.getPassword());
 		driverView.setPhone(driverNow.getPhone());
 		driverView.setSurname(userDriverNow.getSurname());
 		session.setAttribute("userDriverNow", userDriverNow);

@@ -22,9 +22,21 @@ import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
 
+/**
+ * Update flight command
+ * 
+ * @author A.Shporta
+ */
 public class UpdateFlightCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(UpdateFlightCommand.class);
+	
+	private FlightService flightServ;
+	
+	public UpdateFlightCommand(FlightService flightServ) {
+		super();
+		this.flightServ = flightServ;
+	}
 
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
@@ -66,7 +78,6 @@ public class UpdateFlightCommand implements Command{
 		else{
 			departureTime = shipNow.getDepartureTime();
 		}
-		FlightService flightServ = FlightService.getInstance();
 		
 		Integer reqId= shipNow.getDriverShippngRequestId();
 		

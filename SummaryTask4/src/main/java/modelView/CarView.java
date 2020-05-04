@@ -1,5 +1,10 @@
 package modelView;
-
+/**
+ * View for car entity.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class CarView {
 private int id;
 	

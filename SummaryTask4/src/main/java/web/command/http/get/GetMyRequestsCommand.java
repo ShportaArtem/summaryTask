@@ -18,10 +18,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Get MyRequests command
+ * 
+ * @author A.Shporta
+ */
 public class GetMyRequestsCommand implements Command{
 	
 	private static Logger LOG = Logger.getLogger(GetMyRequestsCommand.class);
+	
+	private RequestService requestServ;
+	
+	public GetMyRequestsCommand(RequestService requestServ) {
+		super();
+		this.requestServ = requestServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -30,7 +42,6 @@ public class GetMyRequestsCommand implements Command{
 		
 		HttpSession session = request.getSession(false);
 		CommandResult cr = new HttpCommandResult(RequestType.GET,  Path.PAGE_MY_REQUESTS);
-		RequestService requestServ = RequestService.getInstance();
 		User driverNow = (User) session.getAttribute("user");
 		List<DriverShippingRequest> requests = requestServ.findRequestsByDriverId(driverNow.getId());
 		LOG.trace("Found in DB: requests --> " + requests);

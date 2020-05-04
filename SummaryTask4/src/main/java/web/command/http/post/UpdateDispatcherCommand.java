@@ -13,15 +13,28 @@ import db.exception.AppException;
 import db.exception.DBException;
 import model.User;
 import service.DispatcherService;
+import utils.HashUtil;
 import web.Path;
 import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
 
+/**
+ * Update dispatcher command
+ * 
+ * @author A.Shporta
+ */
 public class UpdateDispatcherCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(UpdateDispatcherCommand.class);
+	
+	private DispatcherService dispServ;
+	
+	public UpdateDispatcherCommand(DispatcherService dispServ) {
+		super();
+		this.dispServ = dispServ;
+	}
 
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
@@ -30,7 +43,6 @@ public class UpdateDispatcherCommand implements Command{
 		LOG.debug("Command starts");
 		
 		HttpSession session = request.getSession();
-		DispatcherService dispServ = DispatcherService.getInstance();
 		User dispatcherNow = (User) session.getAttribute("dispatcherNow");
 		LOG.trace("Found in session atributes: dispatcherNow --> " + dispatcherNow);
 		
@@ -41,7 +53,7 @@ public class UpdateDispatcherCommand implements Command{
 		}
 		if(!"".equals(request.getParameter("password"))) {
 		try {
-			dispatcherNow.setPassword(request.getParameter("password"));
+			dispatcherNow.setPassword(new String(HashUtil.getSHA(request.getParameter("password"))));
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}

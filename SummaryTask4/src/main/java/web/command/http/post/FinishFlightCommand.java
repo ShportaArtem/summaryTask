@@ -17,9 +17,21 @@ import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
 
+/**
+ * Finish flight command
+ * 
+ * @author A.Shporta
+ */
 public class FinishFlightCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(FinishFlightCommand.class);
+	
+	private FlightService reqServ;
+	
+	public FinishFlightCommand(FlightService reqServ) {
+		super();
+		this.reqServ = reqServ;
+	}
 
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
@@ -38,7 +50,6 @@ public class FinishFlightCommand implements Command{
 		String vehicleCondition =  request.getParameter("vehicleCondition");
 		LOG.trace("Found in request parameters: vehicleCondition --> " + vehicleCondition);
 		
-		FlightService reqServ = FlightService.getInstance();
 		reqServ.finishShipping(vehicleCondition, myRequestNow);
 		LOG.trace("Finish flight" );
 		

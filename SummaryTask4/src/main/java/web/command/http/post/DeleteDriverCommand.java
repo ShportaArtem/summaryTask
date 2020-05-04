@@ -15,11 +15,24 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Delete driver command
+ * 
+ * @author A.Shporta
+ */
 public class DeleteDriverCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(AddCarCommand.class);
 	
+	private DriverService service;
+	private LoginService serv;
+	
+	public DeleteDriverCommand(DriverService service, LoginService serv) {
+		super();
+		this.service = service;
+		this.serv = serv;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -29,8 +42,6 @@ public class DeleteDriverCommand implements Command{
 		String driverLogin = request.getParameter("driverLogin");
 		LOG.trace("Found in request parameters: driverLogin --> " + driverLogin);
 		
-		DriverService service = DriverService.getInstance();
-		LoginService serv = LoginService.getInstance();
 		User user = serv.findUserByLogin(driverLogin);
 		LOG.trace("Found in DB user --> " + user);
 		

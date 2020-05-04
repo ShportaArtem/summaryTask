@@ -14,15 +14,28 @@ import db.exception.DBException;
 import model.Driver;
 import model.User;
 import service.DriverService;
+import utils.HashUtil;
 import web.Path;
 import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
 
+/**
+ * Update driver command
+ * 
+ * @author A.Shporta
+ */
 public class UpdateDriverCommand implements Command{
 
 	private static Logger LOG = Logger.getLogger(UpdateDriverCommand.class);
+	
+	private DriverService driverServ;
+	
+	public UpdateDriverCommand(DriverService driverServ) {
+		super();
+		this.driverServ = driverServ;
+	}
 
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
@@ -31,7 +44,6 @@ public class UpdateDriverCommand implements Command{
 		LOG.debug("Command starts");
 		
 		HttpSession session = request.getSession();
-		DriverService driverServ = DriverService.getInstance();
 		Driver driverNow = (Driver) session.getAttribute("driverNow");
 		LOG.trace("Found in session atributes: driverNow --> " + driverNow);
 		
@@ -45,7 +57,7 @@ public class UpdateDriverCommand implements Command{
 		}
 		if(!"".equals(request.getParameter("password"))) {
 		try {
-			userDriver.setPassword(request.getParameter("password"));
+			userDriver.setPassword(new String(HashUtil.getSHA(request.getParameter("password"))));
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}

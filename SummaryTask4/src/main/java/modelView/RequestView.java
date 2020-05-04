@@ -1,5 +1,10 @@
 package modelView;
-
+/**
+ * View for driverShippingRequest entity.
+ * 
+ * @author A.Shporta
+ * 
+ */
 public class RequestView {
 	
 	private int id;

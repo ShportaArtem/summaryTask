@@ -15,10 +15,22 @@ import web.command.Command;
 import web.command.CommandResult;
 import web.command.http.HttpCommandResult;
 import web.controller.RequestType;
-
+/**
+ * Open update dispatcher command
+ * 
+ * @author A.Shporta
+ */
 public class OpenUpdateDispatcherCommand implements Command {
 	
 	private static Logger LOG = Logger.getLogger(OpenUpdateDispatcherCommand.class);
+	
+	private LoginService loginServ;
+	
+	public OpenUpdateDispatcherCommand(LoginService loginServ) {
+		super();
+		this.loginServ = loginServ;
+	}
+
 	@Override
 	public CommandResult execute(HttpServletRequest request, HttpServletResponse response)
 			throws DBException, AppException {
@@ -29,7 +41,6 @@ public class OpenUpdateDispatcherCommand implements Command {
 		Integer id = Integer.parseInt(request.getParameter("dispatcherId"));
 		LOG.trace("Found in request parametrs: dispatcherId --> " + id);
 		
-		LoginService loginServ = LoginService.getInstance();
 		User dispatcherNow = loginServ.findUserById(id);
 		LOG.trace("Found in DB: dispatcherNow --> " + dispatcherNow);
 		
